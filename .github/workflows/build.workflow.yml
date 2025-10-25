@@ -85,6 +85,12 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install scons
 
+      - name: Set up MSVC environment
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.vcvars }}
+
       - name: Install build prerequisites (Linux)
         if: matrix.platform == 'linux'
         run: |
@@ -125,18 +131,6 @@ jobs:
         if: runner.os == 'Windows'
         shell: cmd
         run: |
-          setlocal EnableDelayedExpansion
-          set "VSVCVARS="
-          for %%i in (Enterprise Professional Community BuildTools) do (
-            if exist "%ProgramFiles(x86)%\Microsoft Visual Studio\2022\%%i\VC\Auxiliary\Build\vcvarsall.bat" (
-              set "VSVCVARS=%ProgramFiles(x86)%\Microsoft Visual Studio\2022\%%i\VC\Auxiliary\Build\vcvarsall.bat"
-            )
-          )
-          if not defined VSVCVARS (
-            echo Could not locate vcvarsall.bat
-            exit /b 1
-          )
-          call "%VSVCVARS%" ${{ matrix.vcvars }}
           scons platform=windows target=editor arch=${{ matrix.arch }}
           scons platform=windows target=template_debug arch=${{ matrix.arch }}
           scons platform=windows target=template_release arch=${{ matrix.arch }}
