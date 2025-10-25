@@ -101,7 +101,14 @@ jobs:
           brew install scons
 
       - name: Prepare SCons cache directory
-        run: mkdir -p "$SCONS_CACHE"
+        shell: python
+        run: |
+          import os
+
+          path = os.environ.get("SCONS_CACHE")
+          if not path:
+              raise SystemExit("SCONS_CACHE is not set")
+          os.makedirs(path, exist_ok=True)
 
       - name: Build plugin (Linux/macOS)
         if: runner.os != 'Windows'

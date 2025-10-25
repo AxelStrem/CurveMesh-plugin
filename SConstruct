@@ -64,8 +64,11 @@ else:
         Default(library)
     else:
         dll_target = os.path.join("bin", library_base + env.get("SHLIBSUFFIX", ".dll"))
-        implib_target = os.path.join("bin", library_base + env.get("LIBSUFFIX", ".lib"))
-        library = env.SharedLibrary(target=[dll_target, implib_target], source=sources)
+        targets = [dll_target]
+        if env["platform"] == "windows":
+            implib_target = os.path.join("bin", library_base + env.get("LIBSUFFIX", ".lib"))
+            targets.append(implib_target)
+        library = env.SharedLibrary(target=targets, source=sources)
         env.NoCache(library)
         Default(library)
 
