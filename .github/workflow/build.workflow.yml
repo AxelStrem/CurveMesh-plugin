@@ -1,0 +1,132 @@
+name: Build Curve3DMesh Plugin
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  clang-format:
+    name: Clang Format
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Install clang-format
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-format-15
+
+      - name: Verify formatting
+        run: |
+          files=$(git ls-files '*.c' '*.cc' '*.cxx' '*.cpp' '*.h' '*.hh' '*.hpp' '*.hxx')
+          if [ -n "$files" ]; then
+            clang-format-15 --version
+            clang-format-15 --dry-run --Werror $files
+          fi
+
+  build-plugin:
+    name: Build ${{ matrix.platform }} ${{ matrix.arch }}
+    needs: clang-format
+    runs-on: ${{ matrix.os }}
+    environment: build
+    env:
+      SCONS_CACHE: ${{ github.workspace }}/.scons_cache
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            platform: linux
+            arch: x86_64
+            scons_arch: x86_64
+          - os: macos-latest
+            platform: macos
+            arch: universal
+            scons_arch: universal
+          - os: windows-latest
+            platform: windows
+            arch: x86_64
+            vcvars: amd64
+          - os: windows-latest
+            platform: windows
+            arch: x86_32
+            vcvars: x86
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install SCons
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install scons
+
+      - name: Install build prerequisites (Linux)
+        if: matrix.platform == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential pkg-config libx11-dev \
+            libxcursor-dev libxinerama-dev libgl1-mesa-dev libglu1-mesa-dev \
+            libasound2-dev libpulse-dev libudev-dev libxi-dev libxrandr-dev \
+            libwayland-dev
+
+      - name: Install build prerequisites (macOS)
+        if: matrix.platform == 'macos'
+        run: |
+          brew update
+          brew install scons
+
+      - name: Prepare SCons cache directory
+        run: mkdir -p "$SCONS_CACHE"
+
+      - name: Build plugin (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: |
+          scons platform=${{ matrix.platform }} target=editor arch=${{ matrix.scons_arch }}
+          scons platform=${{ matrix.platform }} target=template_debug arch=${{ matrix.scons_arch }}
+          scons platform=${{ matrix.platform }} target=template_release arch=${{ matrix.scons_arch }}
+
+      - name: Build plugin (Windows)
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: |
+          setlocal EnableDelayedExpansion
+          for %%i in (Enterprise Professional Community BuildTools) do (
+            if exist "%ProgramFiles(x86)%\Microsoft Visual Studio\2022\%%i\VC\Auxiliary\Build\vcvarsall.bat" (
+              set VSVCVARS=%ProgramFiles(x86)%\Microsoft Visual Studio\2022\%%i\VC\Auxiliary\Build\vcvarsall.bat
+            )
+          )
+          if not defined VSVCVARS (
+            echo Could not locate vcvarsall.bat
+            exit /b 1
+          )
+          call "%VSVCVARS%" ${{ matrix.vcvars }}
+          scons platform=windows target=editor arch=${{ matrix.arch }}
+          scons platform=windows target=template_debug arch=${{ matrix.arch }}
+          scons platform=windows target=template_release arch=${{ matrix.arch }}
+
+      - name: Upload build artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: curve3dmesh-${{ matrix.platform }}-${{ matrix.arch }}
+          path: build/
+          retention-days: 7
