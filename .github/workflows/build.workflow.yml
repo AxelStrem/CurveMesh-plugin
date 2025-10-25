@@ -21,6 +21,9 @@ jobs:
           fetch-depth: 0
           submodules: recursive
 
+      - name: Apply godot-cpp patch
+        run: git -C godot-cpp apply --ignore-space-change --ignore-whitespace ../patches/godot-cpp/0001-class-icon-hook.patch
+
       - name: Install clang-format
         run: |
           sudo apt-get update
@@ -69,6 +72,9 @@ jobs:
           fetch-depth: 0
           submodules: recursive
 
+      - name: Apply godot-cpp patch
+        run: git -C godot-cpp apply --ignore-space-change --ignore-whitespace ../patches/godot-cpp/0001-class-icon-hook.patch
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -94,8 +100,19 @@ jobs:
           brew update
           brew install scons
 
-      - name: Prepare SCons cache directory
-        run: mkdir -p "$SCONS_CACHE"
+      - name: Prepare SCons cache directory (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          if (-not $env:SCONS_CACHE) {
+            throw "SCONS_CACHE is not set"
+          }
+          New-Item -ItemType Directory -Path $env:SCONS_CACHE -Force | Out-Null
+
+      - name: Prepare SCons cache directory (Unix)
+        if: runner.os != 'Windows'
+        run: |
+          mkdir -p "$SCONS_CACHE"
 
       - name: Build plugin (Linux/macOS)
         if: runner.os != 'Windows'
