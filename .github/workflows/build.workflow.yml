@@ -126,9 +126,10 @@ jobs:
         shell: cmd
         run: |
           setlocal EnableDelayedExpansion
+          set "VSVCVARS="
           for %%i in (Enterprise Professional Community BuildTools) do (
             if exist "%ProgramFiles(x86)%\Microsoft Visual Studio\2022\%%i\VC\Auxiliary\Build\vcvarsall.bat" (
-              set VSVCVARS=%ProgramFiles(x86)%\Microsoft Visual Studio\2022\%%i\VC\Auxiliary\Build\vcvarsall.bat
+              set "VSVCVARS=%ProgramFiles(x86)%\Microsoft Visual Studio\2022\%%i\VC\Auxiliary\Build\vcvarsall.bat"
             )
           )
           if not defined VSVCVARS (
