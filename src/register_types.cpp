@@ -16,71 +16,89 @@
 using namespace godot;
 
 #ifdef TOOLS_ENABLED
-namespace {
+namespace
+{
 
-void register_curve3d_mesh_editor_icon() {
-	Engine *engine = Engine::get_singleton();
-	if (!engine || !engine->is_editor_hint()) {
-		return;
-	}
+void register_curve3d_mesh_editor_icon()
+{
+    Engine *engine = Engine::get_singleton();
+    if (!engine || !engine->is_editor_hint())
+    {
+        return;
+    }
 
-	EditorInterface *editor_interface = EditorInterface::get_singleton();
-	if (editor_interface == nullptr) {
-		return;
-	}
+    EditorInterface *editor_interface = EditorInterface::get_singleton();
+    if (editor_interface == nullptr)
+    {
+        return;
+    }
 
-	Ref<Theme> editor_theme = editor_interface->get_editor_theme();
-	if (editor_theme.is_null()) {
-		return;
-	}
+    Ref<Theme> editor_theme = editor_interface->get_editor_theme();
+    if (editor_theme.is_null())
+    {
+        return;
+    }
 
-	ResourceLoader *loader = ResourceLoader::get_singleton();
-	Ref<Texture2D> icon;
-	if (loader != nullptr) {
-		icon = loader->load(Curve3DMesh::get_class_icon_path());
-	}
+    ResourceLoader *loader = ResourceLoader::get_singleton();
+    Ref<Texture2D> icon;
+    if (loader != nullptr)
+    {
+        icon = loader->load(Curve3DMesh::get_class_icon_path());
+    }
 
-	if (icon.is_null()) {
-		WARN_PRINT("Curve3DMesh: failed to load editor icon resource.");
-		return;
-	}
+    if (icon.is_null())
+    {
+        WARN_PRINT("Curve3DMesh: failed to load editor icon resource.");
+        return;
+    }
 
-	editor_theme->set_icon("Curve3DMesh", "EditorIcons", icon);
+    editor_theme->set_icon("Curve3DMesh", "EditorIcons", icon);
 }
 
 } // namespace
 #endif
 
-void initialize_curve3d_mesh_module(ModuleInitializationLevel p_level) {
-	switch (p_level) {
-		case MODULE_INITIALIZATION_LEVEL_SCENE:
-			ClassDB::register_class<Curve3DMesh>();
-			break;
+void initialize_curve3d_mesh_module(ModuleInitializationLevel p_level)
+{
+    switch (p_level)
+    {
+    case MODULE_INITIALIZATION_LEVEL_SCENE:
+        ClassDB::register_class<Curve3DMesh>();
+        break;
 #ifdef TOOLS_ENABLED
-		case MODULE_INITIALIZATION_LEVEL_EDITOR:
-			register_curve3d_mesh_editor_icon();
-			break;
+    case MODULE_INITIALIZATION_LEVEL_EDITOR:
+        register_curve3d_mesh_editor_icon();
+        break;
 #endif
-		default:
-			break;
-	}
+    default:
+        break;
+    }
 }
 
-void uninitialize_curve3d_mesh_module(ModuleInitializationLevel p_level) {
-	switch (p_level) {
-		case MODULE_INITIALIZATION_LEVEL_SCENE:
-			break;
-		default:
-			break;
-	}
+void uninitialize_curve3d_mesh_module(ModuleInitializationLevel p_level)
+{
+    switch (p_level)
+    {
+    case MODULE_INITIALIZATION_LEVEL_SCENE:
+        break;
+    default:
+        break;
+    }
 }
 
-extern "C" {
-GDExtensionBool GDE_EXPORT curve3d_mesh_library_init(GDExtensionInterfaceGetProcAddress p_get_proc_address, GDExtensionClassLibraryPtr p_library, GDExtensionInitialization *r_initialization) {
-	GDExtensionBinding::InitObject init_obj(p_get_proc_address, p_library, r_initialization);
-	init_obj.register_initializer(initialize_curve3d_mesh_module);
-	init_obj.register_terminator(uninitialize_curve3d_mesh_module);
-	init_obj.set_minimum_library_initialization_level(MODULE_INITIALIZATION_LEVEL_SCENE);
-	return init_obj.init();
-}
+extern "C"
+{
+    GDExtensionBool GDE_EXPORT curve3d_mesh_library_init(
+        GDExtensionInterfaceGetProcAddress p_get_proc_address,
+        GDExtensionClassLibraryPtr p_library,
+        GDExtensionInitialization *r_initialization)
+    {
+        GDExtensionBinding::InitObject init_obj(p_get_proc_address, p_library,
+                                                r_initialization);
+        init_obj.register_initializer(initialize_curve3d_mesh_module);
+        init_obj.register_terminator(uninitialize_curve3d_mesh_module);
+        init_obj.set_minimum_library_initialization_level(
+            MODULE_INITIALIZATION_LEVEL_SCENE);
+        return init_obj.init();
+    }
 }
