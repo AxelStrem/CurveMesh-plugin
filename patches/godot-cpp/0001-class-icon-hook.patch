@@ -1,0 +1,86 @@
+From 834c90479c9bf67c2338084eff9c2620b40b5ad1 Mon Sep 17 00:00:00 2001
+From: Dmitrii Khrustalev <axelstrem@gmail.com>
+Date: Sat, 25 Oct 2025 19:48:18 +0400
+Subject: [PATCH] added an icon metadata hook
+
+---
+ include/godot_cpp/core/class_db.hpp | 44 ++++++++++++++++++++++++++++-
+ 1 file changed, 43 insertions(+), 1 deletion(-)
+
+diff --git a/include/godot_cpp/core/class_db.hpp b/include/godot_cpp/core/class_db.hpp
+index 24ac5bf..29f7806 100644
+--- a/include/godot_cpp/core/class_db.hpp
++++ b/include/godot_cpp/core/class_db.hpp
+@@ -47,6 +47,7 @@
+ #include <list>
+ #include <mutex>
+ #include <set>
++#include <type_traits>
+ #include <unordered_map>
+ #include <vector>
+ 
+@@ -62,6 +63,46 @@ namespace godot {
+ 
+ #define DEFVAL(m_defval) (m_defval)
+ 
++namespace detail {
++
++template <typename T, typename = void>
++struct HasGetClassIconPath : std::false_type {};
++
++template <typename T>
++struct HasGetClassIconPath<T, std::void_t<decltype(T::get_class_icon_path())>> : std::true_type {};
++
++template <typename>
++struct DependentFalse : std::false_type {};
++
++template <typename T>
++_FORCE_INLINE_ const String *resolve_class_icon_path() {
++	if constexpr (!HasGetClassIconPath<T>::value) {
++		return nullptr;
++	} else {
++		auto icon_candidate = T::get_class_icon_path();
++		using ReturnType = std::decay_t<decltype(icon_candidate)>;
++		if constexpr (std::is_same_v<ReturnType, String>) {
++			static const String icon_path = icon_candidate;
++			return icon_path.is_empty() ? nullptr : &icon_path;
++		} else if constexpr (std::is_same_v<ReturnType, StringName>) {
++			static const String icon_path = String(icon_candidate);
++			return icon_path.is_empty() ? nullptr : &icon_path;
++		} else if constexpr (std::is_same_v<ReturnType, const char *> || std::is_same_v<ReturnType, char *>) {
++			const char *path_cstr = icon_candidate;
++			if (path_cstr == nullptr || path_cstr[0] == '\0') {
++				return nullptr;
++			}
++			static const String icon_path = path_cstr;
++			return &icon_path;
++		} else {
++			static_assert(DependentFalse<ReturnType>::value, "Unsupported return type from get_class_icon_path().");
++			return nullptr;
++		}
++	}
++}
++
++} // namespace detail
++
+ struct MethodDefinition {
+ 	StringName name;
+ 	std::list<StringName> args;
+@@ -251,12 +292,13 @@ void ClassDB::_register_class(bool p_virtual, bool p_exposed, bool p_runtime) {
+ 	class_register_order.push_back(cl.name);
+ 
+ 	// Register this class with Godot
++	const String *icon_path_ptr = detail::resolve_class_icon_path<T>();
+ 	GDExtensionClassCreationInfo5 class_info = {
+ 		p_virtual, // GDExtensionBool is_virtual;
+ 		is_abstract, // GDExtensionBool is_abstract;
+ 		p_exposed, // GDExtensionBool is_exposed;
+ 		p_runtime, // GDExtensionBool is_runtime;
+-		nullptr, // GDExtensionConstStringPtr icon_path;
++		icon_path_ptr != nullptr ? reinterpret_cast<GDExtensionConstStringPtr>(icon_path_ptr) : nullptr, // GDExtensionConstStringPtr icon_path;
+ 		T::set_bind, // GDExtensionClassSet set_func;
+ 		T::get_bind, // GDExtensionClassGet get_func;
+ 		T::has_get_property_list() ? T::get_property_list_bind : nullptr, // GDExtensionClassGetPropertyList get_property_list_func;
+-- 
+2.37.0.windows.1
+
