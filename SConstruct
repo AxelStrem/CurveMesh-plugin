@@ -53,6 +53,10 @@ if not sources:
     Default(env.Alias("curve3d_mesh_extension", []))
 else:
     library_base = "curve3d_mesh" + env["suffix"]
+    plugin_root = os.path.join("build", "addons", "curve3d_mesh")
+    bin_dir = os.path.join(plugin_root, "bin")
+    icons_dir = os.path.join(plugin_root, "icons")
+
     if env["platform"] == "ios":
         static_targets = [os.path.join("bin", library_base + env.get("LIBSUFFIX", ".a"))]
         library = env.StaticLibrary(target=static_targets, source=sources)
@@ -65,11 +69,15 @@ else:
         env.NoCache(library)
         Default(library)
 
-        plugin_dir = os.path.join("build", "addons", "curve3d_mesh")
-        library_nodes = env.Flatten([library])
-        installed_binaries = env.Install(plugin_dir, library_nodes)
-        gdextension_target = os.path.join(plugin_dir, "curve3d_mesh.gdextension")
-        gdextension_copy = env.InstallAs(gdextension_target, "curve3d_mesh.gdextension")
+    outputs = []
+    library_nodes = env.Flatten([library]) if library else []
+    if library_nodes:
+        outputs.append(env.Install(bin_dir, library_nodes))
 
-        Default(installed_binaries)
-        Default(gdextension_copy)
+    outputs.append(env.InstallAs(os.path.join(bin_dir, "curve3d_mesh.gdextension"), "curve3d_mesh.gdextension"))
+    outputs.append(env.InstallAs(os.path.join(icons_dir, "Curve3DMesh.svg"), "Curve3DMesh.svg"))
+
+    for node in outputs:
+        Default(node)
+
+    env.Clean(outputs, env.Dir(plugin_root))
