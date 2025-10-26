@@ -23,10 +23,10 @@ Procedural ribbon/tube mesh generation for Godot 4, driven by a `Curve3D`. The p
 
 ## Installation
 
-1. Download the ZIP for your platform/architecture from the [Releases](https://github.com/AxelStrem/Curve3DMesh-plugin/releases) page (for example `curvemesh-windows-x86_64.zip`).
-2. Extract the archive into your Godot project so it creates `addons/curve_mesh/` with the binaries, `.gdextension`, and icon files.
-3. (Re)open the project in Godot and enable the addon under `Project > Project Settings > Plugins`.
-4. Create a `MeshInstance3D`, assign a new `CurveMesh` resource, and provide a `Curve3D` to start drawing geometry along the path.
+1. Download the ZIP for your platform/architecture from the [Releases](https://github.com/AxelStrem/Curve3DMesh-plugin/releases) page (for example `curve3dmesh-windows-x86_64.zip`).
+2. Extract the archive into your Godot project so it creates `addons/curve3d_mesh/` with the binaries, `.gdextension`, and icon files.
+3. (Re)open the project in Godot.
+`CurveMesh` class should now be available to you in scripts and in `PrimitiveMesh` selection.
 
 ## Building from source
 
