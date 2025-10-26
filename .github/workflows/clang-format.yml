@@ -1,0 +1,37 @@
+name: Clang Format
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  clang-format:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Apply godot-cpp patch
+        run: git -C godot-cpp apply --ignore-space-change --ignore-whitespace ../patches/godot-cpp/0001-class-icon-hook.patch
+
+      - name: Install clang-format
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-format-15
+
+      - name: Verify formatting
+        run: |
+          files=$(git ls-files '*.c' '*.cc' '*.cxx' '*.cpp' '*.h' '*.hh' '*.hpp' '*.hxx')
+          if [ -n "$files" ]; then
+            clang-format-15 --version
+            clang-format-15 --dry-run --Werror $files
+          fi

@@ -1,0 +1,65 @@
+name: Build Windows x86_64
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+    environment: build
+    env:
+      SCONS_CACHE: ${{ github.workspace }}\.scons_cache
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Apply godot-cpp patch
+        run: git -C godot-cpp apply --ignore-space-change --ignore-whitespace ../patches/godot-cpp/0001-class-icon-hook.patch
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install SCons
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install scons
+
+      - name: Set up MSVC environment
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: amd64
+
+      - name: Prepare SCons cache directory
+        shell: pwsh
+        run: |
+          if (-not $env:SCONS_CACHE) {
+            throw "SCONS_CACHE is not set"
+          }
+          New-Item -ItemType Directory -Path $env:SCONS_CACHE -Force | Out-Null
+
+      - name: Build plugin
+        shell: cmd
+        run: |
+          scons platform=windows target=editor arch=x86_64
+          scons platform=windows target=template_debug arch=x86_64
+          scons platform=windows target=template_release arch=x86_64
+
+      - name: Upload build artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: curve3dmesh-windows-x86_64
+          path: build/
+          retention-days: 7

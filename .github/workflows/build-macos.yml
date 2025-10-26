@@ -1,0 +1,60 @@
+name: Build macOS
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: macos-latest
+    environment: build
+    env:
+      SCONS_CACHE: ${{ github.workspace }}/.scons_cache
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Apply godot-cpp patch
+        run: git -C godot-cpp apply --ignore-space-change --ignore-whitespace ../patches/godot-cpp/0001-class-icon-hook.patch
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install SCons
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install scons
+
+      - name: Install build prerequisites
+        run: |
+          brew update
+          brew install scons
+
+      - name: Prepare SCons cache directory
+        run: |
+          mkdir -p "$SCONS_CACHE"
+
+      - name: Build plugin
+        run: |
+          scons platform=macos target=editor arch=universal
+          scons platform=macos target=template_debug arch=universal
+          scons platform=macos target=template_release arch=universal
+
+      - name: Upload build artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: curve3dmesh-macos-universal
+          path: build/
+          retention-days: 7
