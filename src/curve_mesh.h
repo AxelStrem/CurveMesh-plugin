@@ -1,5 +1,5 @@
-#ifndef CURVE3D_MESH_H
-#define CURVE3D_MESH_H
+#ifndef CURVE_MESH_H
+#define CURVE_MESH_H
 
 #include <godot_cpp/classes/curve.hpp>
 #include <godot_cpp/classes/curve3d.hpp>
@@ -19,9 +19,9 @@
 namespace godot
 {
 
-class Curve3DMesh : public PrimitiveMesh
+class CurveMesh : public PrimitiveMesh
 {
-    GDCLASS(Curve3DMesh, PrimitiveMesh);
+  GDCLASS(CurveMesh, PrimitiveMesh);
 
   public:
     enum TessellationMode
@@ -168,17 +168,17 @@ class Curve3DMesh : public PrimitiveMesh
     void set_extend_edges(bool p_enable);
     bool is_extend_edges() const;
 
-    static constexpr const char *get_class_icon_path()
-    {
-        return "res://addons/curve3d_mesh/icons/Curve3DMesh.svg";
-    }
+  static constexpr const char *get_class_icon_path()
+  {
+    return "res://addons/curve_mesh/icons/CurveMesh.svg";
+  }
 
-    Curve3DMesh();
+  CurveMesh();
 };
 
 } // namespace godot
 
-VARIANT_ENUM_CAST(godot::Curve3DMesh::TessellationMode)
-VARIANT_ENUM_CAST(godot::Curve3DMesh::Profile)
+VARIANT_ENUM_CAST(godot::CurveMesh::TessellationMode)
+VARIANT_ENUM_CAST(godot::CurveMesh::Profile)
 
-#endif // CURVE3D_MESH_H
+#endif // CURVE_MESH_H

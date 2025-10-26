@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="Curve3DMesh" inherits="PrimitiveMesh" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../class.xsd">
+<class name="CurveMesh" inherits="PrimitiveMesh" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../class.xsd">
 	<brief_description>
 		Class representing a [PrimitiveMesh] shaped by a [Curve3D].
 	</brief_description>
@@ -25,7 +25,7 @@
 		</member>
 		<member name="interleave_vertices" type="bool" setter="set_interleave_vertices" getter="is_interleave_vertices" default="false">
 		</member>
-		<member name="profile" type="int" setter="set_profile" getter="get_profile" enum="Curve3DMesh.Profile" default="0">
+		<member name="profile" type="int" setter="set_profile" getter="get_profile" enum="CurveMesh.Profile" default="0">
 			Determines the shape of the mesh's cross-section.
 		</member>
 		<member name="scale_uv_by_length" type="bool" setter="set_scale_uv_by_length" getter="is_scale_uv_by_length" default="false">
@@ -39,7 +39,7 @@
 		<member name="smooth_shaded_corners" type="bool" setter="set_smooth_shaded_corners" getter="is_smooth_shaded_corners" default="true">
 			If false, corners will be flat-shaded.
 		</member>
-		<member name="tessellation_mode" type="int" setter="set_tessellation_mode" getter="get_tessellation_mode" enum="Curve3DMesh.TessellationMode" default="1">
+		<member name="tessellation_mode" type="int" setter="set_tessellation_mode" getter="get_tessellation_mode" enum="CurveMesh.TessellationMode" default="1">
 		</member>
 		<member name="tessellation_tolerance" type="float" setter="set_tessellation_tolerance" getter="get_tessellation_tolerance" default="4.0">
 		</member>

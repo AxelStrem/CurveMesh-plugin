@@ -50,10 +50,10 @@ if env["target"] in ["editor", "template_debug"]:
         sources.append(doc_data)
 
 if not sources:
-    Default(env.Alias("curve3d_mesh_extension", []))
+    Default(env.Alias("curve_mesh_extension", []))
 else:
-    library_base = "curve3d_mesh" + env["suffix"]
-    plugin_root = os.path.join("build", "addons", "curve3d_mesh")
+    library_base = "curve_mesh" + env["suffix"]
+    plugin_root = os.path.join("build", "addons", "curve_mesh")
     bin_dir = os.path.join(plugin_root, "bin")
     icons_dir = os.path.join(plugin_root, "icons")
 
@@ -77,8 +77,8 @@ else:
     if library_nodes:
         outputs.append(env.Install(bin_dir, library_nodes))
 
-    outputs.append(env.InstallAs(os.path.join(bin_dir, "curve3d_mesh.gdextension"), "curve3d_mesh.gdextension"))
-    outputs.append(env.InstallAs(os.path.join(icons_dir, "Curve3DMesh.svg"), "Curve3DMesh.svg"))
+    outputs.append(env.InstallAs(os.path.join(bin_dir, "curve_mesh.gdextension"), "curve_mesh.gdextension"))
+    outputs.append(env.InstallAs(os.path.join(icons_dir, "CurveMesh.svg"), "CurveMesh.svg"))
 
     for node in outputs:
         Default(node)

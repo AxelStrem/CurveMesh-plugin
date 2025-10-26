@@ -1,4 +1,4 @@
-#include "curve3d_mesh.h"
+#include "curve_mesh.h"
 
 #include <gdextension_interface.h>
 #include <godot_cpp/core/class_db.hpp>
@@ -19,7 +19,7 @@ using namespace godot;
 namespace
 {
 
-void register_curve3d_mesh_editor_icon()
+void register_curve_mesh_editor_icon()
 {
     Engine *engine = Engine::get_singleton();
     if (!engine || !engine->is_editor_hint())
@@ -43,31 +43,31 @@ void register_curve3d_mesh_editor_icon()
     Ref<Texture2D> icon;
     if (loader != nullptr)
     {
-        icon = loader->load(Curve3DMesh::get_class_icon_path());
+        icon = loader->load(CurveMesh::get_class_icon_path());
     }
 
     if (icon.is_null())
     {
-        WARN_PRINT("Curve3DMesh: failed to load editor icon resource.");
+        WARN_PRINT("CurveMesh: failed to load editor icon resource.");
         return;
     }
 
-    editor_theme->set_icon("Curve3DMesh", "EditorIcons", icon);
+    editor_theme->set_icon("CurveMesh", "EditorIcons", icon);
 }
 
 } // namespace
 #endif
 
-void initialize_curve3d_mesh_module(ModuleInitializationLevel p_level)
+void initialize_curve_mesh_module(ModuleInitializationLevel p_level)
 {
     switch (p_level)
     {
     case MODULE_INITIALIZATION_LEVEL_SCENE:
-        ClassDB::register_class<Curve3DMesh>();
+        ClassDB::register_class<CurveMesh>();
         break;
 #ifdef TOOLS_ENABLED
     case MODULE_INITIALIZATION_LEVEL_EDITOR:
-        register_curve3d_mesh_editor_icon();
+        register_curve_mesh_editor_icon();
         break;
 #endif
     default:
@@ -75,7 +75,7 @@ void initialize_curve3d_mesh_module(ModuleInitializationLevel p_level)
     }
 }
 
-void uninitialize_curve3d_mesh_module(ModuleInitializationLevel p_level)
+void uninitialize_curve_mesh_module(ModuleInitializationLevel p_level)
 {
     switch (p_level)
     {
@@ -88,15 +88,15 @@ void uninitialize_curve3d_mesh_module(ModuleInitializationLevel p_level)
 
 extern "C"
 {
-    GDExtensionBool GDE_EXPORT curve3d_mesh_library_init(
+    GDExtensionBool GDE_EXPORT curve_mesh_library_init(
         GDExtensionInterfaceGetProcAddress p_get_proc_address,
         GDExtensionClassLibraryPtr p_library,
         GDExtensionInitialization *r_initialization)
     {
         GDExtensionBinding::InitObject init_obj(p_get_proc_address, p_library,
                                                 r_initialization);
-        init_obj.register_initializer(initialize_curve3d_mesh_module);
-        init_obj.register_terminator(uninitialize_curve3d_mesh_module);
+        init_obj.register_initializer(initialize_curve_mesh_module);
+        init_obj.register_terminator(uninitialize_curve_mesh_module);
         init_obj.set_minimum_library_initialization_level(
             MODULE_INITIALIZATION_LEVEL_SCENE);
         return init_obj.init();

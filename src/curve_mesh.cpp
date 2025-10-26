@@ -1,4 +1,4 @@
-#include "curve3d_mesh.h"
+#include "curve_mesh.h"
 
 #include <godot_cpp/classes/global_constants.hpp>
 #include <godot_cpp/classes/mesh.hpp>
@@ -54,9 +54,9 @@ static float _get_width_curve_value(const Ref<Curve> &width_curve, float t,
 }
 } // namespace
 
-Curve3DMesh::Curve3DMesh() {}
+CurveMesh::CurveMesh() {}
 
-void Curve3DMesh::_update_lightmap_size()
+void CurveMesh::_update_lightmap_size()
 {
     if (!get_add_uv2() || curve.is_null() || curve->get_point_count() <= 1)
     {
@@ -104,7 +104,7 @@ void Curve3DMesh::_update_lightmap_size()
     set_lightmap_size_hint(lightmap_size_hint);
 }
 
-Array Curve3DMesh::_create_mesh_array() const
+Array CurveMesh::_create_mesh_array() const
 {
     PackedVector3Array points;
     PackedVector3Array normals;
@@ -177,12 +177,12 @@ Array Curve3DMesh::_create_mesh_array() const
     }
     arr[Mesh::ARRAY_INDEX] = indices;
 
-    const_cast<Curve3DMesh *>(this)->_update_lightmap_size();
+    const_cast<CurveMesh *>(this)->_update_lightmap_size();
 
     return arr;
 }
 
-void Curve3DMesh::_generate_curve_points(
+void CurveMesh::_generate_curve_points(
     LocalVector<CenterPoint> &center_points, real_t &total_length) const
 {
     int point_count = 0;
@@ -321,7 +321,7 @@ void Curve3DMesh::_generate_curve_points(
     }
 }
 
-void Curve3DMesh::_generate_edge_vertices(
+void CurveMesh::_generate_edge_vertices(
     LocalVector<CenterPoint> &center_points, real_t total_length,
     int radial_segments, float uv2_padding,
     LocalVector<EdgePoint> &edge_points) const
@@ -563,7 +563,7 @@ void Curve3DMesh::_generate_edge_vertices(
     }
 }
 
-void Curve3DMesh::_interleave_edge_vertices(
+void CurveMesh::_interleave_edge_vertices(
     LocalVector<EdgePoint> &edge_points,
     LocalVector<CenterPoint> &center_points, int radial_segments) const
 {
@@ -599,7 +599,7 @@ void Curve3DMesh::_interleave_edge_vertices(
     }
 }
 
-void Curve3DMesh::_filter_overlapping_vertices(
+void CurveMesh::_filter_overlapping_vertices(
     LocalVector<EdgePoint> &edge_points,
     LocalVector<CenterPoint> &center_points, int radial_segments) const
 {
@@ -875,7 +875,7 @@ void Curve3DMesh::_filter_overlapping_vertices(
     }
 }
 
-void Curve3DMesh::_generate_triangles(
+void CurveMesh::_generate_triangles(
     LocalVector<EdgePoint> &edge_points, int radial_segments,
     PackedVector3Array &points, PackedVector3Array &normals,
     PackedFloat32Array &tangents, PackedVector2Array &uvs,
@@ -1005,7 +1005,7 @@ void Curve3DMesh::_generate_triangles(
     }
 }
 
-void Curve3DMesh::_validate_property(PropertyInfo &p_property) const
+void CurveMesh::_validate_property(PropertyInfo &p_property) const
 {
     static const StringName tessellation_tolerance_name(
         "tessellation_tolerance");
@@ -1064,88 +1064,88 @@ void Curve3DMesh::_validate_property(PropertyInfo &p_property) const
     }
 }
 
-void Curve3DMesh::_bind_methods()
+void CurveMesh::_bind_methods()
 {
     ClassDB::bind_method(D_METHOD("set_curve", "curve"),
-                         &Curve3DMesh::set_curve);
-    ClassDB::bind_method(D_METHOD("get_curve"), &Curve3DMesh::get_curve);
+                         &CurveMesh::set_curve);
+    ClassDB::bind_method(D_METHOD("get_curve"), &CurveMesh::get_curve);
 
     ClassDB::bind_method(D_METHOD("set_width", "width"),
-                         &Curve3DMesh::set_width);
-    ClassDB::bind_method(D_METHOD("get_width"), &Curve3DMesh::get_width);
+                         &CurveMesh::set_width);
+    ClassDB::bind_method(D_METHOD("get_width"), &CurveMesh::get_width);
 
     ClassDB::bind_method(D_METHOD("set_width_curve", "curve"),
-                         &Curve3DMesh::set_width_curve);
+                         &CurveMesh::set_width_curve);
     ClassDB::bind_method(D_METHOD("get_width_curve"),
-                         &Curve3DMesh::get_width_curve);
+                         &CurveMesh::get_width_curve);
 
     ClassDB::bind_method(D_METHOD("set_extend_edges", "extend_edges"),
-                         &Curve3DMesh::set_extend_edges);
+                         &CurveMesh::set_extend_edges);
     ClassDB::bind_method(D_METHOD("is_extend_edges"),
-                         &Curve3DMesh::is_extend_edges);
+                         &CurveMesh::is_extend_edges);
 
     ClassDB::bind_method(D_METHOD("set_scale_uv_by_length", "enable"),
-                         &Curve3DMesh::set_scale_uv_by_length);
+                         &CurveMesh::set_scale_uv_by_length);
     ClassDB::bind_method(D_METHOD("is_scale_uv_by_length"),
-                         &Curve3DMesh::is_scale_uv_by_length);
+                         &CurveMesh::is_scale_uv_by_length);
 
     ClassDB::bind_method(D_METHOD("set_scale_uv_by_width", "enable"),
-                         &Curve3DMesh::set_scale_uv_by_width);
+                         &CurveMesh::set_scale_uv_by_width);
     ClassDB::bind_method(D_METHOD("is_scale_uv_by_width"),
-                         &Curve3DMesh::is_scale_uv_by_width);
+                         &CurveMesh::is_scale_uv_by_width);
 
     ClassDB::bind_method(D_METHOD("set_tile_segment_uv", "enable"),
-                         &Curve3DMesh::set_tile_segment_uv);
+                         &CurveMesh::set_tile_segment_uv);
     ClassDB::bind_method(D_METHOD("is_tile_segment_uv"),
-                         &Curve3DMesh::is_tile_segment_uv);
+                         &CurveMesh::is_tile_segment_uv);
 
     ClassDB::bind_method(D_METHOD("set_tessellation_mode", "mode"),
-                         &Curve3DMesh::set_tessellation_mode);
+                         &CurveMesh::set_tessellation_mode);
     ClassDB::bind_method(D_METHOD("get_tessellation_mode"),
-                         &Curve3DMesh::get_tessellation_mode);
+                         &CurveMesh::get_tessellation_mode);
 
     ClassDB::bind_method(D_METHOD("set_tessellation_tolerance", "tolerance"),
-                         &Curve3DMesh::set_tessellation_tolerance);
+                         &CurveMesh::set_tessellation_tolerance);
     ClassDB::bind_method(D_METHOD("get_tessellation_tolerance"),
-                         &Curve3DMesh::get_tessellation_tolerance);
+                         &CurveMesh::get_tessellation_tolerance);
 
     ClassDB::bind_method(D_METHOD("set_corner_threshold", "corner_threshold"),
-                         &Curve3DMesh::set_corner_threshold);
+                         &CurveMesh::set_corner_threshold);
     ClassDB::bind_method(D_METHOD("get_corner_threshold"),
-                         &Curve3DMesh::get_corner_threshold);
+                         &CurveMesh::get_corner_threshold);
 
     ClassDB::bind_method(D_METHOD("set_smooth_shaded_corners", "enable"),
-                         &Curve3DMesh::set_smooth_shaded_corners);
+                         &CurveMesh::set_smooth_shaded_corners);
     ClassDB::bind_method(D_METHOD("is_smooth_shaded_corners"),
-                         &Curve3DMesh::is_smooth_shaded_corners);
+                         &CurveMesh::is_smooth_shaded_corners);
 
     ClassDB::bind_method(D_METHOD("set_interleave_vertices", "enable"),
-                         &Curve3DMesh::set_interleave_vertices);
+                         &CurveMesh::set_interleave_vertices);
     ClassDB::bind_method(D_METHOD("is_interleave_vertices"),
-                         &Curve3DMesh::is_interleave_vertices);
+                         &CurveMesh::is_interleave_vertices);
 
     ClassDB::bind_method(D_METHOD("set_filter_overlaps", "enable"),
-                         &Curve3DMesh::set_filter_overlaps);
+                         &CurveMesh::set_filter_overlaps);
     ClassDB::bind_method(D_METHOD("is_filter_overlaps"),
-                         &Curve3DMesh::is_filter_overlaps);
+                         &CurveMesh::is_filter_overlaps);
 
     ClassDB::bind_method(D_METHOD("set_up_vector", "up_vector"),
-                         &Curve3DMesh::set_up_vector);
+                         &CurveMesh::set_up_vector);
     ClassDB::bind_method(D_METHOD("get_up_vector"),
-                         &Curve3DMesh::get_up_vector);
+                         &CurveMesh::get_up_vector);
 
     ClassDB::bind_method(D_METHOD("set_follow_curve", "follow"),
-                         &Curve3DMesh::set_follow_curve);
+                         &CurveMesh::set_follow_curve);
     ClassDB::bind_method(D_METHOD("is_follow_curve"),
-                         &Curve3DMesh::is_follow_curve);
+                         &CurveMesh::is_follow_curve);
 
     ClassDB::bind_method(D_METHOD("set_profile", "profile"),
-                         &Curve3DMesh::set_profile);
-    ClassDB::bind_method(D_METHOD("get_profile"), &Curve3DMesh::get_profile);
+                         &CurveMesh::set_profile);
+    ClassDB::bind_method(D_METHOD("get_profile"), &CurveMesh::get_profile);
 
     ClassDB::bind_method(D_METHOD("set_segments", "segments"),
-                         &Curve3DMesh::set_segments);
-    ClassDB::bind_method(D_METHOD("get_segments"), &Curve3DMesh::get_segments);
+                         &CurveMesh::set_segments);
+    ClassDB::bind_method(D_METHOD("get_segments"), &CurveMesh::get_segments);
 
     ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "curve",
                               PROPERTY_HINT_RESOURCE_TYPE, "Curve3D"),
@@ -1214,7 +1214,7 @@ void Curve3DMesh::_bind_methods()
     BIND_ENUM_CONSTANT(PROFILE_TUBE);
 }
 
-void Curve3DMesh::set_curve(const Ref<Curve3D> &p_curve)
+void CurveMesh::set_curve(const Ref<Curve3D> &p_curve)
 {
     if (curve == p_curve)
     {
@@ -1240,9 +1240,9 @@ rest_request_update:
     request_update();
 }
 
-Ref<Curve3D> Curve3DMesh::get_curve() const { return curve; }
+Ref<Curve3D> CurveMesh::get_curve() const { return curve; }
 
-void Curve3DMesh::set_width(float p_width)
+void CurveMesh::set_width(float p_width)
 {
     if (!Math::is_equal_approx(width, p_width))
     {
@@ -1251,9 +1251,9 @@ void Curve3DMesh::set_width(float p_width)
     }
 }
 
-float Curve3DMesh::get_width() const { return width; }
+float CurveMesh::get_width() const { return width; }
 
-void Curve3DMesh::set_width_curve(const Ref<Curve> &p_curve)
+void CurveMesh::set_width_curve(const Ref<Curve> &p_curve)
 {
     if (width_curve == p_curve)
     {
@@ -1279,9 +1279,9 @@ void Curve3DMesh::set_width_curve(const Ref<Curve> &p_curve)
     request_update();
 }
 
-Ref<Curve> Curve3DMesh::get_width_curve() const { return width_curve; }
+Ref<Curve> CurveMesh::get_width_curve() const { return width_curve; }
 
-void Curve3DMesh::set_scale_uv_by_length(bool p_enable)
+void CurveMesh::set_scale_uv_by_length(bool p_enable)
 {
     if (scale_uv_by_length != p_enable)
     {
@@ -1290,9 +1290,9 @@ void Curve3DMesh::set_scale_uv_by_length(bool p_enable)
     }
 }
 
-bool Curve3DMesh::is_scale_uv_by_length() const { return scale_uv_by_length; }
+bool CurveMesh::is_scale_uv_by_length() const { return scale_uv_by_length; }
 
-void Curve3DMesh::set_scale_uv_by_width(bool p_enable)
+void CurveMesh::set_scale_uv_by_width(bool p_enable)
 {
     if (scale_uv_by_width != p_enable)
     {
@@ -1301,9 +1301,9 @@ void Curve3DMesh::set_scale_uv_by_width(bool p_enable)
     }
 }
 
-bool Curve3DMesh::is_scale_uv_by_width() const { return scale_uv_by_width; }
+bool CurveMesh::is_scale_uv_by_width() const { return scale_uv_by_width; }
 
-void Curve3DMesh::set_tile_segment_uv(bool p_enable)
+void CurveMesh::set_tile_segment_uv(bool p_enable)
 {
     if (tile_segment_uv != p_enable)
     {
@@ -1312,9 +1312,9 @@ void Curve3DMesh::set_tile_segment_uv(bool p_enable)
     }
 }
 
-bool Curve3DMesh::is_tile_segment_uv() const { return tile_segment_uv; }
+bool CurveMesh::is_tile_segment_uv() const { return tile_segment_uv; }
 
-void Curve3DMesh::set_interleave_vertices(bool p_enable)
+void CurveMesh::set_interleave_vertices(bool p_enable)
 {
     if (interleave_vertices != p_enable)
     {
@@ -1323,9 +1323,9 @@ void Curve3DMesh::set_interleave_vertices(bool p_enable)
     }
 }
 
-bool Curve3DMesh::is_interleave_vertices() const { return interleave_vertices; }
+bool CurveMesh::is_interleave_vertices() const { return interleave_vertices; }
 
-void Curve3DMesh::set_filter_overlaps(bool p_enable)
+void CurveMesh::set_filter_overlaps(bool p_enable)
 {
     if (filter_overlaps != p_enable)
     {
@@ -1334,9 +1334,9 @@ void Curve3DMesh::set_filter_overlaps(bool p_enable)
     }
 }
 
-bool Curve3DMesh::is_filter_overlaps() const { return filter_overlaps; }
+bool CurveMesh::is_filter_overlaps() const { return filter_overlaps; }
 
-void Curve3DMesh::set_tessellation_mode(TessellationMode p_mode)
+void CurveMesh::set_tessellation_mode(TessellationMode p_mode)
 {
     if (tessellation_mode != p_mode)
     {
@@ -1346,12 +1346,12 @@ void Curve3DMesh::set_tessellation_mode(TessellationMode p_mode)
     }
 }
 
-Curve3DMesh::TessellationMode Curve3DMesh::get_tessellation_mode() const
+CurveMesh::TessellationMode CurveMesh::get_tessellation_mode() const
 {
     return tessellation_mode;
 }
 
-void Curve3DMesh::set_tessellation_tolerance(float p_tolerance)
+void CurveMesh::set_tessellation_tolerance(float p_tolerance)
 {
     float clamped = p_tolerance < 0.001f ? 0.001f : p_tolerance;
     if (!Math::is_equal_approx(tessellation_tolerance, clamped))
@@ -1361,12 +1361,12 @@ void Curve3DMesh::set_tessellation_tolerance(float p_tolerance)
     }
 }
 
-float Curve3DMesh::get_tessellation_tolerance() const
+float CurveMesh::get_tessellation_tolerance() const
 {
     return tessellation_tolerance;
 }
 
-void Curve3DMesh::set_corner_threshold(float p_threshold)
+void CurveMesh::set_corner_threshold(float p_threshold)
 {
     if (!Math::is_equal_approx(corner_threshold, p_threshold))
     {
@@ -1375,9 +1375,9 @@ void Curve3DMesh::set_corner_threshold(float p_threshold)
     }
 }
 
-float Curve3DMesh::get_corner_threshold() const { return corner_threshold; }
+float CurveMesh::get_corner_threshold() const { return corner_threshold; }
 
-void Curve3DMesh::set_smooth_shaded_corners(bool p_enable)
+void CurveMesh::set_smooth_shaded_corners(bool p_enable)
 {
     if (smooth_shaded_corners != p_enable)
     {
@@ -1386,12 +1386,12 @@ void Curve3DMesh::set_smooth_shaded_corners(bool p_enable)
     }
 }
 
-bool Curve3DMesh::is_smooth_shaded_corners() const
+bool CurveMesh::is_smooth_shaded_corners() const
 {
     return smooth_shaded_corners;
 }
 
-void Curve3DMesh::set_up_vector(const Vector3 &p_up_vector)
+void CurveMesh::set_up_vector(const Vector3 &p_up_vector)
 {
     if (!up_vector.is_equal_approx(p_up_vector))
     {
@@ -1400,9 +1400,9 @@ void Curve3DMesh::set_up_vector(const Vector3 &p_up_vector)
     }
 }
 
-Vector3 Curve3DMesh::get_up_vector() const { return up_vector; }
+Vector3 CurveMesh::get_up_vector() const { return up_vector; }
 
-void Curve3DMesh::set_follow_curve(bool p_enable)
+void CurveMesh::set_follow_curve(bool p_enable)
 {
     if (follow_curve != p_enable)
     {
@@ -1411,9 +1411,9 @@ void Curve3DMesh::set_follow_curve(bool p_enable)
     }
 }
 
-bool Curve3DMesh::is_follow_curve() const { return follow_curve; }
+bool CurveMesh::is_follow_curve() const { return follow_curve; }
 
-void Curve3DMesh::set_profile(Profile p_profile)
+void CurveMesh::set_profile(Profile p_profile)
 {
     if (profile != p_profile)
     {
@@ -1431,9 +1431,9 @@ void Curve3DMesh::set_profile(Profile p_profile)
     }
 }
 
-Curve3DMesh::Profile Curve3DMesh::get_profile() const { return profile; }
+CurveMesh::Profile CurveMesh::get_profile() const { return profile; }
 
-void Curve3DMesh::set_segments(int p_segments)
+void CurveMesh::set_segments(int p_segments)
 {
     int minimum = (profile == PROFILE_TUBE) ? 3 : 2;
     int clamped = Math::max(p_segments, minimum);
@@ -1444,9 +1444,9 @@ void Curve3DMesh::set_segments(int p_segments)
     }
 }
 
-int Curve3DMesh::get_segments() const { return segments; }
+int CurveMesh::get_segments() const { return segments; }
 
-void Curve3DMesh::set_extend_edges(bool p_enable)
+void CurveMesh::set_extend_edges(bool p_enable)
 {
     if (extend_edges != p_enable)
     {
@@ -1455,6 +1455,6 @@ void Curve3DMesh::set_extend_edges(bool p_enable)
     }
 }
 
-bool Curve3DMesh::is_extend_edges() const { return extend_edges; }
+bool CurveMesh::is_extend_edges() const { return extend_edges; }
 
 } // namespace godot
