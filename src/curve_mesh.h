@@ -21,7 +21,7 @@ namespace godot
 
 class CurveMesh : public PrimitiveMesh
 {
-  GDCLASS(CurveMesh, PrimitiveMesh);
+    GDCLASS(CurveMesh, PrimitiveMesh);
 
   public:
     enum TessellationMode
@@ -168,12 +168,12 @@ class CurveMesh : public PrimitiveMesh
     void set_extend_edges(bool p_enable);
     bool is_extend_edges() const;
 
-  static constexpr const char *get_class_icon_path()
-  {
-    return "res://addons/curve_mesh/icons/CurveMesh.svg";
-  }
+    static constexpr const char *get_class_icon_path()
+    {
+        return "res://addons/curve_mesh/icons/CurveMesh.svg";
+    }
 
-  CurveMesh();
+    CurveMesh();
 };
 
 } // namespace godot

@@ -52,9 +52,9 @@ jobs:
       - name: Build plugin
         shell: cmd
         run: |
-          scons platform=windows target=editor arch=x86
-          scons platform=windows target=template_debug arch=x86
-          scons platform=windows target=template_release arch=x86
+          scons platform=windows target=editor arch=x86_32
+          scons platform=windows target=template_debug arch=x86_32
+          scons platform=windows target=template_release arch=x86_32
 
       - name: Upload build artifacts
         if: always()

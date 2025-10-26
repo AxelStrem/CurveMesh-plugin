@@ -182,8 +182,8 @@ Array CurveMesh::_create_mesh_array() const
     return arr;
 }
 
-void CurveMesh::_generate_curve_points(
-    LocalVector<CenterPoint> &center_points, real_t &total_length) const
+void CurveMesh::_generate_curve_points(LocalVector<CenterPoint> &center_points,
+                                       real_t &total_length) const
 {
     int point_count = 0;
     switch (tessellation_mode)
@@ -1066,12 +1066,10 @@ void CurveMesh::_validate_property(PropertyInfo &p_property) const
 
 void CurveMesh::_bind_methods()
 {
-    ClassDB::bind_method(D_METHOD("set_curve", "curve"),
-                         &CurveMesh::set_curve);
+    ClassDB::bind_method(D_METHOD("set_curve", "curve"), &CurveMesh::set_curve);
     ClassDB::bind_method(D_METHOD("get_curve"), &CurveMesh::get_curve);
 
-    ClassDB::bind_method(D_METHOD("set_width", "width"),
-                         &CurveMesh::set_width);
+    ClassDB::bind_method(D_METHOD("set_width", "width"), &CurveMesh::set_width);
     ClassDB::bind_method(D_METHOD("get_width"), &CurveMesh::get_width);
 
     ClassDB::bind_method(D_METHOD("set_width_curve", "curve"),
@@ -1131,8 +1129,7 @@ void CurveMesh::_bind_methods()
 
     ClassDB::bind_method(D_METHOD("set_up_vector", "up_vector"),
                          &CurveMesh::set_up_vector);
-    ClassDB::bind_method(D_METHOD("get_up_vector"),
-                         &CurveMesh::get_up_vector);
+    ClassDB::bind_method(D_METHOD("get_up_vector"), &CurveMesh::get_up_vector);
 
     ClassDB::bind_method(D_METHOD("set_follow_curve", "follow"),
                          &CurveMesh::set_follow_curve);
