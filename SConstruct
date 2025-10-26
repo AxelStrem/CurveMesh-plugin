@@ -79,7 +79,6 @@ else:
 
     outputs.append(env.InstallAs(os.path.join(bin_dir, "curve3d_mesh.gdextension"), "curve3d_mesh.gdextension"))
     outputs.append(env.InstallAs(os.path.join(icons_dir, "Curve3DMesh.svg"), "Curve3DMesh.svg"))
-    outputs.append(env.InstallAs(os.path.join(icons_dir, "Curve3DMesh.svg.import"), "Curve3DMesh.svg.import"))
 
     for node in outputs:
         Default(node)
