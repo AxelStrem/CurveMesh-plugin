@@ -5,12 +5,12 @@ compatibility_minimum = "4.5"
 
 [libraries]
 
-macos.debug = "res://addons/curve_mesh/bin/curve_mesh.macos.template_debug.framework"
-macos.release = "res://addons/curve_mesh/bin/curve_mesh.macos.template_release.framework"
-macos.editor = "res://addons/curve_mesh/bin/curve_mesh.macos.editor.framework"
-linux.debug.x86_64 = "res://addons/curve_mesh/bin/curve_mesh.linux.template_debug.x86_64.so"
-linux.release.x86_64 = "res://addons/curve_mesh/bin/curve_mesh.linux.template_release.x86_64.so"
-linux.editor.x86_64 = "res://addons/curve_mesh/bin/curve_mesh.linux.editor.x86_64.so"
+macos.debug = "res://addons/curve_mesh/bin/libcurve_mesh.macos.template_debug.universal.dylib"
+macos.release = "res://addons/curve_mesh/bin/libcurve_mesh.macos.template_release.universal.dylib"
+macos.editor = "res://addons/curve_mesh/bin/libcurve_mesh.macos.editor.universal.dylib"
+linux.debug.x86_64 = "res://addons/curve_mesh/bin/libcurve_mesh.linux.template_debug.x86_64.so"
+linux.release.x86_64 = "res://addons/curve_mesh/bin/libcurve_mesh.linux.template_release.x86_64.so"
+linux.editor.x86_64 = "res://addons/curve_mesh/bin/libcurve_mesh.linux.editor.x86_64.so"
 windows.debug.x86_32 = "res://addons/curve_mesh/bin/curve_mesh.windows.template_debug.x86_32.dll"
 windows.release.x86_32 = "res://addons/curve_mesh/bin/curve_mesh.windows.template_release.x86_32.dll"
 windows.editor.x86_32 = "res://addons/curve_mesh/bin/curve_mesh.windows.editor.x86_32.dll"
